@@ -9,7 +9,8 @@ import torch
 import torch.nn as nn
 from torch.optim import Adam
 
-from utils import recall_at_k, ndcg_k, get_metric, cal_mrr, get_user_performance_perpopularity, get_item_performance_perpopularity
+# from utils import recall_at_k, ndcg_k, get_metric, cal_mrr, get_user_performance_perpopularity, get_item_performance_perpopularity
+from utils import recall_at_k, ndcg_k, get_metric, cal_mrr
 from modules import wasserstein_distance, kl_distance, wasserstein_distance_matmul, d2s_gaussiannormal, d2s_1overx, kl_distance_matmul
 
 

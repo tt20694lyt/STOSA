@@ -18,9 +18,11 @@ from utils import EarlyStopping, get_user_seqs, get_item2attribute_json, check_p
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--data_dir', default='../data/', type=str)
+    # parser.add_argument('--data_dir', default='../data/', type=str)
+    parser.add_argument('--data_dir', default=r'D:\Downloads\STOSA\data\_', type=str)
     parser.add_argument('--output_dir', default='output/', type=str)
     parser.add_argument('--data_name', default='Beauty', type=str)
+    # parser.add_argument('--data_name', default='All_Beauty', type=str)
     parser.add_argument('--do_eval', action='store_true')
     parser.add_argument('--ckp', default=10, type=int, help="pretrain epochs 10, 20, 30...")
 
@@ -62,7 +64,8 @@ def main():
 
     args.data_file = args.data_dir + args.data_name + '.txt'
     #item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json'
-
+    print(args.data_file)
+    print(args)
     user_seq, max_item, valid_rating_matrix, test_rating_matrix, num_users = \
         get_user_seqs(args.data_file)
 

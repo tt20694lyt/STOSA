@@ -5,10 +5,12 @@ import os
 import copy
 import json
 
-
+true = True
+false =False
 def parse(path):
     g = gzip.open(path, 'r')
     for l in g:
+        # print(l)
         yield eval(l)
 
 
@@ -16,8 +18,11 @@ countU = defaultdict(lambda: 0)
 countP = defaultdict(lambda: 0)
 line = 0
 
-DATASET = 'Office_Products'
-dataname = '/home/zfan/BDSC/projects/datasets/reviews_' + DATASET + '_5.json.gz'
+# DATASET = 'Office_Products'
+DATASET ='All_Beauty'
+# dataname = '/home/zfan/BDSC/projects/datasets/reviews_' + DATASET + '_5.json.gz'
+dataname = 'D:\Downloads\STOSA\data\All_Beauty\_' + DATASET + '_5.json.gz'
+
 if not os.path.isdir('./'+DATASET):
     os.mkdir('./'+DATASET)
 train_file = './'+DATASET+'/train.txt'
@@ -32,8 +37,11 @@ data_file = './'+DATASET+'.txt'
 
 for one_interaction in parse(dataname):
     rev = one_interaction['reviewerID']
+    # print(rev)
     asin = one_interaction['asin']
+    # print(asin)
     time = float(one_interaction['unixReviewTime'])
+    # print(time)
     countU[rev] += 1
     countP[asin] += 1
 

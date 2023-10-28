@@ -130,6 +130,7 @@ def generate_rating_matrix_test(user_seq, num_users, num_items):
     return rating_matrix
 
 def get_user_seqs(data_file):
+    # print(data_file)
     lines = open(data_file).readlines()
     user_seq = []
     item_set = set()
@@ -258,7 +259,8 @@ def cal_mrr(actual, predicted):
         r = np.array(r)
         if np.sum(r) > 0:
             #sum_mrr += np.reciprocal(np.where(r==1)[0]+1, dtype=np.float)[0]
-            one_user_mrr = np.reciprocal(np.where(r==1)[0]+1, dtype=np.float)[0]
+            # one_user_mrr = np.reciprocal(np.where(r==1)[0]+1, dtype=np.float)[0]
+            one_user_mrr = np.reciprocal(np.where(r == 1)[0] + 1, dtype=np.float64)[0]
             sum_mrr += one_user_mrr
             true_users += 1
             mrr_dict[i] = one_user_mrr
