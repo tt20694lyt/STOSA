@@ -5,6 +5,10 @@ import os
 import copy
 import json
 
+# current_directory = os.getcwd()
+# print(current_directory)
+
+
 true = True
 false =False
 def parse(path):
@@ -25,6 +29,7 @@ dataname = 'D:\Downloads\STOSA\data\All_Beauty\_' + DATASET + '_5.json.gz'
 
 if not os.path.isdir('./'+DATASET):
     os.mkdir('./'+DATASET)
+print('./'+DATASET)#输出 ./All_Beauty / './'当前目录   实际是在D:\Downloads\STOSA\data\寻找
 train_file = './'+DATASET+'/train.txt'
 valid_file = './'+DATASET+'/valid.txt'
 test_file = './'+DATASET+'/test.txt'

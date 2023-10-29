@@ -84,6 +84,7 @@ class DistSAModel(nn.Module):
 
         self.apply(self.init_weights)
 
+    #"mean" 指的是平均或中心位置 这个函数可能会添加一个基于中心位置的嵌入。
     def add_position_mean_embedding(self, sequence):
 
         seq_length = sequence.size(1)
@@ -99,6 +100,7 @@ class DistSAModel(nn.Module):
 
         return sequence_emb
 
+    #"cov" 通常是协方差（covariance）的缩写。协方差是两个变量变化方式的相似性的度量。 考虑序列中位置之间的某种关系或依赖性，然后为这些位置添加嵌入
     def add_position_cov_embedding(self, sequence):
 
         seq_length = sequence.size(1)

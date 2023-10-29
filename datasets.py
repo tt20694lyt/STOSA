@@ -25,7 +25,7 @@ class PretrainDataset(Dataset):
         return len(self.part_sequence)
 
     def __getitem__(self, index):
-
+        #Mask部分：隐藏或遮蔽输入句子的某些部分，然后训练模型来预测这些被遮蔽的部分
         sequence = self.part_sequence[index] # pos_items
         # sample neg item for every masked item
         masked_item_sequence = []
@@ -46,6 +46,11 @@ class PretrainDataset(Dataset):
         neg_items.append(neg_sample(item_set, self.args.item_size))
 
         # Segment Prediction
+        '''Segment Prediction (or Type Embeddings in the context of BERT):
+        在BERT中，为了处理成对的句子（例如，问答任务或下一个句子预测任务），输入通常由两个句子组成。
+        为了区分这两个句子，BERT使用"segment embeddings"或称为"type embeddings"。
+        除了这些embeddings外，还有一个"segment mask"或"segment IDs"，用于指示每个token属于哪个句子。
+        例如，对于两个句子"A"和"B"，"segment IDs"可能是[0, 0, 0, ..., 1, 1, 1]，其中0表示属于句子A的token，1表示属于句子B的token。'''
         if len(sequence) < 2:
             masked_segment_sequence = sequence
             pos_segment = sequence
@@ -68,6 +73,7 @@ class PretrainDataset(Dataset):
         assert len(neg_segment) == len(sequence)
 
         # padding sequence
+        # padding来填充较短的句子至一个固定长度
         pad_len = self.max_len - len(sequence)
         masked_item_sequence = [0] * pad_len + masked_item_sequence
         pos_items = [0] * pad_len + sequence
@@ -84,8 +90,8 @@ class PretrainDataset(Dataset):
         pos_segment = pos_segment[-self.max_len:]
         neg_segment = neg_segment[-self.max_len:]
 
-        # Associated Attribute Prediction
-        # Masked Attribute Prediction
+        # Associated Attribute Prediction  这可能指的是预测与给定输入相关或关联的属性。
+        # Masked Attribute Prediction      "Masked Attribute Prediction"可能意味着某种形式的属性被遮蔽或隐藏，模型的任务是预测它
         attributes = []
         for item in pos_items:
             attribute = [0] * self.args.attribute_size

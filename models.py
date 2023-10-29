@@ -3,7 +3,11 @@
 import torch
 import torch.nn as nn
 from modules import Encoder, LayerNorm
-
+'''
+深度学习中 models(模型)，通常指的是整体的神经网络结构。这可能是一个完整的语言模型，如BERT或Transformer，或者是其他任何种类的网络，如RNN、CNN等。
+一个模型通常定义了一系列的层次和操作，这些操作将输入数据转化为输出。例如，在一个分类任务中，模型可能接受一个句子作为输入，并输出每个可能类别的概率。
+在PyTorch中，模型通常由继承自torch.nn.Module的类表示
+'''
 class S3RecModel(nn.Module):
     def __init__(self, args):
         super(S3RecModel, self).__init__()
@@ -67,7 +71,8 @@ class S3RecModel(nn.Module):
         score = torch.mul(context, segment) # [B H]
         return torch.sigmoid(torch.sum(score, dim=-1)) # [B]
 
-    #
+    #位置编码
+    '''如果要修改这个代码，应该是在这里加上不同的embedding对吧？'''
     def add_position_embedding(self, sequence):
 
         seq_length = sequence.size(1)
@@ -80,7 +85,7 @@ class S3RecModel(nn.Module):
         sequence_emb = self.dropout(sequence_emb)
 
         return sequence_emb
-
+    #预训练
     def pretrain(self, attributes, masked_item_sequence, pos_items,  neg_items,
                   masked_segment_sequence, pos_segment, neg_segment):
 
@@ -160,7 +165,7 @@ class S3RecModel(nn.Module):
         return aap_loss, mip_loss, map_loss, sp_loss
 
     # Fine tune
-    # same as SASRec
+    # same as SASRec    微调
     def finetune(self, input_ids):
 
         attention_mask = (input_ids > 0).long()

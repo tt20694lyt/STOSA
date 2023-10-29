@@ -21,8 +21,8 @@ def main():
     # parser.add_argument('--data_dir', default='../data/', type=str)
     parser.add_argument('--data_dir', default=r'D:\Downloads\STOSA\data\_', type=str)
     parser.add_argument('--output_dir', default='output/', type=str)
-    parser.add_argument('--data_name', default='Beauty', type=str)
-    # parser.add_argument('--data_name', default='All_Beauty', type=str)
+    # parser.add_argument('--data_name', default='Beauty', type=str)
+    parser.add_argument('--data_name', default='All_Beauty', type=str)
     parser.add_argument('--do_eval', action='store_true')
     parser.add_argument('--ckp', default=10, type=int, help="pretrain epochs 10, 20, 30...")
 
@@ -155,10 +155,10 @@ def main():
         print('---------------Change to test_rating_matrix!-------------------')
         # load the best model
         trainer.model.load_state_dict(torch.load(args.checkpoint_path))
-        valid_scores, _, _ = trainer.valid('best', full_sort=True)
+        valid_scores, _, _ = trainer.valid('best', full_sort=True) #验证集返回结果
         trainer.args.train_matrix = test_rating_matrix
-        scores, result_info, _ = trainer.test('best', full_sort=True)
-
+        scores, result_info, _ = trainer.test('best', full_sort=True) #测试集返回结果
+        #验证集主要用于调整模型和选择最佳参数，而测试集用于评估模型的最终性能。模型的最终效果应基于测试集的结果来评估.所以最后两行数据的输出应该是对比第二个结果。
     print(args_str)
     #print(result_info)
     with open(args.log_file, 'a') as f:

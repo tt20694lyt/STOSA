@@ -1,5 +1,9 @@
 import numpy as np
-
+'''
+在PyTorch中，"module"是一个抽象概念，代表神经网络的一部分或组件。torch.nn.Module是所有神经网络模块的基类，它提供了很多实用功能，例如跟踪模型的可训练参数。
+你可以将模块视为构建块。例如，一个卷积层、一个线性层或一个更复杂的结构（如Transformer的一个编码块）都可以是模块。
+通过组合不同的模块，你可以构建更复杂的模型。例如，一个完整的Transformer模型可能包含多个编码和解码模块。
+'''
 import copy
 import math
 import torch
