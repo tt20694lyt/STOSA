@@ -1,3 +1,4 @@
+# 重点去搞明白输入进去的都是什么，输出出来的数字是什么含义,彻底搞清楚.txt文件中的数字含义
 import gzip
 from collections import defaultdict
 from datetime import datetime
@@ -26,7 +27,7 @@ line = 0
 DATASET ='All_Beauty'
 # dataname = '/home/zfan/BDSC/projects/datasets/reviews_' + DATASET + '_5.json.gz'
 dataname = 'D:\Downloads\STOSA\data\All_Beauty\_' + DATASET + '_5.json.gz'
-
+#文件路径尽量弄到配置里，或者设置好参数传入,像这个代码一样
 if not os.path.isdir('./'+DATASET):
     os.mkdir('./'+DATASET)
 print('./'+DATASET)#输出 ./All_Beauty / './'当前目录   实际是在D:\Downloads\STOSA\data\寻找
@@ -56,13 +57,13 @@ itemmap = dict()
 itemnum = 1
 User = dict()
 
-
+#这个for循环形成
 for one_interaction in parse(dataname):
     rev = one_interaction['reviewerID']
     asin = one_interaction['asin']
     time = float(one_interaction['unixReviewTime'])
     if countU[rev] < 5 or countP[asin] < 5:
-        continue
+        continue 
 
     if rev in usermap:
         userid = usermap[rev]
@@ -101,6 +102,7 @@ for user in User:
         user_valid[user] = []
         user_test[user] = []
     else:
+        #倒数第二个做为验证集，倒数第一做为测试集
         user_train[user] = User[user][:-2]
         user_valid[user] = []
         user_valid[user].append(User[user][-2])

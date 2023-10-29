@@ -45,10 +45,13 @@ class SASRecModel(nn.Module):
         extended_attention_mask = extended_attention_mask * subsequent_mask
         extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
-
+        # 添加不同的图片和其他表征的embedding
         sequence_emb = self.add_position_embedding(input_ids)
-
+        # figuer_emb =xxxxx
         item_encoded_layers = self.item_encoder(sequence_emb,
+                                                # 添加好几个argument 
+                                                # figure_emb
+                                                # 图片和文本的title 原代码是只有id的 
                                                 extended_attention_mask,
                                                 output_all_encoded_layers=True)
 

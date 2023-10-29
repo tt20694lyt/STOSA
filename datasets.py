@@ -140,7 +140,7 @@ class SASRecDataset(Dataset):
 
         # [0, 1, 2, 3, 4, 5, 6]
         # train [0, 1, 2, 3]
-        # target [1, 2, 3, 4]
+        # target [1, 2, 3, 4] 这里的train 和target
 
         # valid [0, 1, 2, 3, 4]
         # answer [5]
