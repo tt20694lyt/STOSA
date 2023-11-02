@@ -42,10 +42,12 @@ data_file = './'+DATASET+'.txt'
 
 
 for one_interaction in parse(dataname):
-    rev = one_interaction['reviewerID']
+    rev = one_interaction['reviewerID']#"reviewerID": 这是提交评价的用户的唯一标识符。每个用户都有一个与其账户关联的唯一ID，用于区分不同的用户
     # print(rev)
-    asin = one_interaction['asin']
+    asin = one_interaction['asin']# ASIN代表“Amazon Standard Identification Number”，这是亚马逊为每个产品在其目录中分配的唯一标识符。通过这个ID，可以准确地找到特定的产品。
     # print(asin)
+    #这个属性表示评价提交的时间，但它的格式是一个UNIX时间戳。UNIX时间戳（也称为Epoch时间或POSIX时间）是表示从1970年1月1日00:00:00 UTC（协调世界时）到某一特定时间点之间经过的秒数。
+    #它是一个通用的、跨平台的方式来表示时间，经常用于编程和系统设计中。举例，时间戳1252800000表示的日期是2009年9月13日。你可以使用多种编程语言或在线工具将UNIX时间戳转换为可读的日期格式
     time = float(one_interaction['unixReviewTime'])
     # print(time)
     countU[rev] += 1
