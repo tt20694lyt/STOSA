@@ -19,7 +19,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     # parser.add_argument('--data_dir', default='../data/', type=str)
-    parser.add_argument('--data_dir', default=r'D:\Downloads\STOSA\data\_', type=str)
+    parser.add_argument('--data_dir', default=r'D:/Downloads/STOSA/data/', type=str)
     parser.add_argument('--output_dir', default='output/', type=str)
     # parser.add_argument('--data_name', default='Beauty', type=str)
     parser.add_argument('--data_name', default='All_Beauty', type=str)
@@ -122,7 +122,7 @@ def main():
         test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.batch_size)
 
         trainer = FinetuneTrainer(model, train_dataloader, eval_dataloader,
-                                test_dataloader, args)
+                                test_dataloader, args)  # 默认参数是用这个model
 
 
     if args.do_eval:

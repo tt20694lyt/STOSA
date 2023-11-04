@@ -26,11 +26,11 @@ line = 0
 # DATASET = 'Office_Products'
 DATASET ='All_Beauty'
 # dataname = '/home/zfan/BDSC/projects/datasets/reviews_' + DATASET + '_5.json.gz'
-dataname = 'D:\Downloads\STOSA\data\All_Beauty\_' + DATASET + '_5.json.gz'
+dataname = r'D:/Downloads/STOSA/data/All_Beauty/' + DATASET + '_5.json.gz'
 #文件路径尽量弄到配置里，或者设置好参数传入,像这个代码一样
 if not os.path.isdir('./'+DATASET):
     os.mkdir('./'+DATASET)
-print('./'+DATASET)#输出 ./All_Beauty / './'当前目录   实际是在D:\Downloads\STOSA\data\寻找
+# print('./'+DATASET)#输出 ./All_Beauty / './'当前目录   实际是在D:\Downloads\STOSA\data\寻找
 train_file = './'+DATASET+'/train.txt'
 valid_file = './'+DATASET+'/valid.txt'
 test_file = './'+DATASET+'/test.txt'
@@ -74,13 +74,18 @@ for one_interaction in parse(dataname):
         usermap[rev] = userid
         User[userid] = []
         usernum += 1
+        # print()
+        # print("finished")
     if asin in itemmap:
         itemid = itemmap[asin]
     else:
         itemid = itemnum
         itemmap[asin] = itemid
         itemnum += 1
+    # print(itemmap)
     User[userid].append([itemid, time])
+    # User[userid].append([itemid])
+    # print(User.items())
 # sort reviews in User according to time
 
 
@@ -113,7 +118,6 @@ for user in User:
 
 
 
-print(usernum, itemnum)
 
 def writetofile(data, dfile):
     with open(dfile, 'w') as f:

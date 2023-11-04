@@ -18,6 +18,7 @@ class PretrainDataset(Dataset):
     def split_sequence(self):
         for seq in self.user_seq:
             input_ids = seq[-(self.max_len+2):-2] # keeping same as train set
+            # print(input_ids)
             for i in range(len(input_ids)):
                 self.part_sequence.append(input_ids[:i+1])
 
