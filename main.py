@@ -21,8 +21,8 @@ def main():
     # parser.add_argument('--data_dir', default='../data/', type=str)
     parser.add_argument('--data_dir', default=r'D:/Downloads/STOSA/data/', type=str)
     parser.add_argument('--output_dir', default='output/', type=str)
-    # parser.add_argument('--data_name', default='Beauty', type=str)
-    parser.add_argument('--data_name', default='All_Beauty', type=str)
+    parser.add_argument('--data_name', default='Beauty', type=str)
+    # parser.add_argument('--data_name', default='All_Beauty', type=str)
     parser.add_argument('--do_eval', action='store_true')
     parser.add_argument('--ckp', default=10, type=int, help="pretrain epochs 10, 20, 30...")
 
@@ -42,8 +42,10 @@ def main():
 
     # train args
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate of adam")
-    parser.add_argument("--batch_size", type=int, default=256, help="number of batch_size")
-    parser.add_argument("--epochs", type=int, default=400, help="number of epochs")
+    # parser.add_argument("--batch_size", type=int, default=256, help="number of batch_size")
+    parser.add_argument("--batch_size", type=int, default=1, help="number of batch_size")
+    # parser.add_argument("--epochs", type=int, default=400, help="number of epochs")
+    parser.add_argument("--epochs", type=int, default=1, help="number of epochs")
     parser.add_argument("--no_cuda", action="store_true")
     parser.add_argument("--log_freq", type=int, default=1, help="per epoch print res")
     parser.add_argument("--seed", default=42, type=int)
@@ -66,6 +68,7 @@ def main():
     #item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json'
     print(args.data_file)
     print(args)
+    # print(get_user_seqs(args.data_file))
     user_seq, max_item, valid_rating_matrix, test_rating_matrix, num_users = \
         get_user_seqs(args.data_file)
 
@@ -93,6 +96,9 @@ def main():
 
     train_dataset = SASRecDataset(args, user_seq, data_type='train')
     train_sampler = RandomSampler(train_dataset)
+    print(111111111111)
+    print("这里去搜寻到input_ids")
+    # print(train_dataset.user_seq)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.batch_size)
 
     eval_dataset = SASRecDataset(args, user_seq, data_type='valid')

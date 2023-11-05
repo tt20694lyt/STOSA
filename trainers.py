@@ -114,6 +114,7 @@ class Trainer:
         self.model.load_state_dict(torch.load(file_name, map_location='cuda:0'))
 
     def cross_entropy(self, seq_out, pos_ids, neg_ids):
+        print("未编码前：", pos_ids)
         # [batch seq_len hidden_size]
         pos_emb = self.model.item_embeddings(pos_ids)
         neg_emb = self.model.item_embeddings(neg_ids)
@@ -132,7 +133,7 @@ class Trainer:
         auc = torch.sum(
             ((torch.sign(pos_logits - neg_logits) + 1) / 2) * istarget
         ) / torch.sum(istarget)
-
+        print("编码后： ", pos_ids)
         return loss, auc
     
 
@@ -323,6 +324,7 @@ class FinetuneTrainer(Trainer):
                     # 0. batch_data will be sent into the device(GPU or cpu)
                     batch = tuple(t.to(self.device) for t in batch)
                     user_ids, input_ids, target_pos, target_neg, answers, sample_negs = batch
+                    # print(input_ids)
                     recommend_output = self.model.finetune(input_ids)
                     test_neg_items = torch.cat((answers, sample_negs), -1)
                     recommend_output = recommend_output[:, -1, :]
@@ -530,6 +532,7 @@ class DistSAModelTrainer(Trainer):
                 # 0. batch_data will be sent into the device(GPU or CPU)
                 batch = tuple(t.to(self.device) for t in batch)
                 user_ids, input_ids, target_pos, target_neg, _ = batch
+                # print("输入的input_ids 是 ：", input_ids)
                 # bpr optimization
                 sequence_mean_output, sequence_cov_output, att_scores, margins = self.model.finetune(input_ids, user_ids)
                 #print(att_scores[0, 0, :, :])

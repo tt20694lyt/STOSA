@@ -129,18 +129,19 @@ def generate_rating_matrix_test(user_seq, num_users, num_items):
 
     return rating_matrix
 
+# 这里是根据生成的txt文件，处理后得到新的user_seq，然后对user_seq进行下一步处理
 def get_user_seqs(data_file):
     # print(data_file)
     lines = open(data_file).readlines()
-    user_seq = []
-    item_set = set()
-    for line in lines:
-        user, items = line.strip().split(' ', 1)
-        items = items.split(' ')
-        items = [int(item) for item in items]
-        user_seq.append(items)
-        item_set = item_set | set(items)
-    max_item = max(item_set)
+    user_seq = []  # 初始化了一个空列表 user_seq，它将用于存储从文件中解析出来的用户序列
+    item_set = set()  # 初始化一个空的集合 item_set，用来存储出现过的所有不同的物品（或者叫项、元素）的编号
+    for line in lines:  # 对于文件中的每一行，执行以下操作
+        user, items = line.strip().split(' ', 1)  # 这行代码首先使用 strip() 去除行尾的换行符，然后用 split(' ', 1) 在第一个空格处将字符串分割为两部分。分割后的两部分分别赋值给 user 和 items 变量。这里假设每行的格式是先有一个用户标识，后跟一系列空格分隔的物品编号。
+        items = items.split(' ')  # 接下来将 items 字符串在每个空格处分割，得到一个包含所有物品编号的字符串列表。
+        items = [int(item) for item in items]  # 将物品编号的字符串列表转换为整数列表
+        user_seq.append(items)  # 将转换后的物品编号列表添加到 user_seq 列表中
+        item_set = item_set | set(items)  # 更新 item_set 集合，将当前用户的物品编号加入集合中。这里使用集合的并集操作来确保 item_set 包含所有唯一的物品编号
+    max_item = max(item_set)  # 获取 item_set 集合中最大的物品编号
 
     num_users = len(lines)
     num_items = max_item + 2
@@ -158,11 +159,11 @@ def get_user_seqs_long(data_file):
         user, items = line.strip().split(' ', 1)
         items = items.split(' ')
         items = [int(item) for item in items]
-        long_sequence.extend(items) #
+        long_sequence.extend(items)  # 将当前用户的项追加到 long_sequence 列表中，这样 long_sequence 会包含所有用户序列中的项
         user_seq.append(items)
         item_set = item_set | set(items)
     max_item = max(item_set)
-
+    # print(user_seq)
     return user_seq, max_item, long_sequence
 
 def get_user_seqs_and_sample(data_file, sample_file):

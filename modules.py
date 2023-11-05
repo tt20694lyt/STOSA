@@ -116,8 +116,9 @@ class Embeddings(nn.Module):
         self.dropout = nn.Dropout(args.hidden_dropout_prob)
 
         self.args = args
-
+# 这里修改过
     def forward(self, input_ids):
+        print("Input to the embedding layer:", input_ids)
         seq_length = input_ids.size(1)
         position_ids = torch.arange(seq_length, dtype=torch.long, device=input_ids.device)
         position_ids = position_ids.unsqueeze(0).expand_as(input_ids)
@@ -126,6 +127,7 @@ class Embeddings(nn.Module):
         embeddings = items_embeddings + position_embeddings
         embeddings = self.LayerNorm(embeddings)
         embeddings = self.dropout(embeddings)
+        print("embedding after:", input_ids)
         return embeddings
 
 class SelfAttention(nn.Module):
