@@ -136,9 +136,9 @@ class SASRecDataset(Dataset):
 
         user_id = index
         items = self.user_seq[index]
-        print("什么是index:", index)
+        # print("什么是index:", index)
         # print("此时的user_seq",self.user_seq)
-        print("刚进去的items是", self.user_seq[index])
+        # print("刚进去的items是", self.user_seq[index])
         assert self.data_type in {"train", "valid", "test"}
 
         # [0, 1, 2, 3, 4, 5, 6]
@@ -165,9 +165,9 @@ class SASRecDataset(Dataset):
             target_pos = items[1:]
             answer = [items[-1]]
 
-        print("input_id是：",  input_ids)
-        print("target_pos是：", target_pos)
-        print("answer是:", answer)
+        # print("input_id是：",  input_ids)
+        # print("target_pos是：", target_pos)
+        # print("answer是:", answer)
         target_neg = []
         seq_set = set(items)  # 将 items 转换为集合 seq_set，这可能用于快速检查元素是否存在于序列中，以便生成负样本。
         for _ in input_ids:  # 遍历 input_ids 中的每个元素。下划线 _ 是一个惯用法，用来表示循环中的变量将不会被使用
@@ -205,7 +205,7 @@ class SASRecDataset(Dataset):
                 torch.tensor(target_neg, dtype=torch.long),
                 torch.tensor(answer, dtype=torch.long),
             )
-        print("cur_tensors是：", cur_tensors)
+        # print("cur_tensors是：", cur_tensors)
         return cur_tensors
 
     def __len__(self):

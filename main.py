@@ -95,10 +95,11 @@ def main():
     args.checkpoint_path = os.path.join(args.output_dir, checkpoint)
 
     train_dataset = SASRecDataset(args, user_seq, data_type='train')
+    print(train_dataset)
     train_sampler = RandomSampler(train_dataset)
     print(111111111111)
     print("这里去搜寻到input_ids")
-    # print(train_dataset.user_seq)
+    # print("进入训练的数据是：" , train_dataset.user_seq)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.batch_size)
 
     eval_dataset = SASRecDataset(args, user_seq, data_type='valid')

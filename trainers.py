@@ -114,7 +114,7 @@ class Trainer:
         self.model.load_state_dict(torch.load(file_name, map_location='cuda:0'))
 
     def cross_entropy(self, seq_out, pos_ids, neg_ids):
-        print("未编码前：", pos_ids)
+        # print("未编码前：", pos_ids)
         # [batch seq_len hidden_size]
         pos_emb = self.model.item_embeddings(pos_ids)
         neg_emb = self.model.item_embeddings(neg_ids)
@@ -133,7 +133,7 @@ class Trainer:
         auc = torch.sum(
             ((torch.sign(pos_logits - neg_logits) + 1) / 2) * istarget
         ) / torch.sum(istarget)
-        print("编码后： ", pos_ids)
+        # print("编码后： ", pos_ids)
         return loss, auc
     
 
