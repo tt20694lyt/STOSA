@@ -42,8 +42,8 @@ def main():
 
     # train args
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate of adam")
-    # parser.add_argument("--batch_size", type=int, default=256, help="number of batch_size")
-    parser.add_argument("--batch_size", type=int, default=1, help="number of batch_size")
+    parser.add_argument("--batch_size", type=int, default=256, help="number of batch_size")
+    # parser.add_argument("--batch_size", type=int, default=1, help="number of batch_size")
     # parser.add_argument("--epochs", type=int, default=400, help="number of epochs")
     parser.add_argument("--epochs", type=int, default=1, help="number of epochs")
     parser.add_argument("--no_cuda", action="store_true")
@@ -95,10 +95,10 @@ def main():
     args.checkpoint_path = os.path.join(args.output_dir, checkpoint)
 
     train_dataset = SASRecDataset(args, user_seq, data_type='train')
-    print(train_dataset)
+    # print(train_dataset)
     train_sampler = RandomSampler(train_dataset)
-    print(111111111111)
-    print("这里去搜寻到input_ids")
+    # print(111111111111)
+    # print("这里去搜寻到input_ids")
     # print("进入训练的数据是：" , train_dataset.user_seq)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.batch_size)
 
@@ -113,6 +113,7 @@ def main():
 
     if args.model_name == 'DistSAModel':
         model = DistSAModel(args=args)
+        # print(model.shape)
         eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=100)
         test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=100)
         trainer = DistSAModelTrainer(model, train_dataloader, eval_dataloader,

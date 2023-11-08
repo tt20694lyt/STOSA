@@ -154,6 +154,9 @@ class SASRecDataset(Dataset):
             input_ids = items[:-3]  # 从 items 序列中获取除了最后三个元素以外的所有元素，这些是训练时的特征输入
             target_pos = items[1:-2]  # target_pos 是正样本目标，也就是 input_ids 的下一个时刻的项目ID。 target_pos 代表下一次用户可能互动的项目
             answer = [0] # no use #训练集不使用？
+        # # ---添加images
+        #     images = items[:-3]
+        #     title = items[1:-2]
 
         elif self.data_type == 'valid':
             input_ids = items[:-2]

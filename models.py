@@ -14,6 +14,10 @@ class S3RecModel(nn.Module):
         self.item_embeddings = nn.Embedding(args.item_size, args.hidden_size, padding_idx=0)
         self.attribute_embeddings = nn.Embedding(args.attribute_size, args.hidden_size, padding_idx=0)
         self.position_embeddings = nn.Embedding(args.max_seq_length, args.hidden_size)
+        # 新的embedding添加
+        self.image_embeddings = nn.Embedding(args.item_size,args.hidden_size, padding_idx=0)
+        self.title_embeddings = nn.Embedding(args.item_size,args.hidden_size, padding_idx=0)
+        # --------
         self.item_encoder = Encoder(args)
         self.LayerNorm = LayerNorm(args.hidden_size, eps=1e-12)
         self.dropout = nn.Dropout(args.hidden_dropout_prob)
@@ -79,10 +83,11 @@ class S3RecModel(nn.Module):
         position_ids = torch.arange(seq_length, dtype=torch.long, device=sequence.device)
         position_ids = position_ids.unsqueeze(0).expand_as(sequence)
         item_embeddings = self.item_embeddings(sequence)
-        # image_embeddings =self.item__image_embeddings(sequence)
-        # title_embeddings = self.item_title_embeddings(sequence)
+        # image_embeddings =self.image_embeddings(sequence)
+        # title_embeddings = self.title_embeddings(sequence)
         position_embeddings = self.position_embeddings(position_ids)
         sequence_emb = item_embeddings + position_embeddings
+        # sequence_emb = item_embeddings + position_embeddings + image_embeddings + title_embeddings
         sequence_emb = self.LayerNorm(sequence_emb)
         sequence_emb = self.dropout(sequence_emb)
 

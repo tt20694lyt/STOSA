@@ -47,7 +47,8 @@ class SASRecModel(nn.Module):
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
         # 添加不同的图片和其他表征的embedding
         sequence_emb = self.add_position_embedding(input_ids)
-        # figuer_emb =xxxxx
+        image_emb =self.add_position_embedding(input_ids)
+        title_emb =self.add_position_embedding(input_ids)
         item_encoded_layers = self.item_encoder(sequence_emb,
                                                 # 添加好几个argument 
                                                 # figure_emb
