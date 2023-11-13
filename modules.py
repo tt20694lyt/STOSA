@@ -22,15 +22,15 @@ def gelu(x):
 
 def swish(x):
     return x * torch.sigmoid(x)
-
+#  保留
 def wasserstein_distance(mean1, cov1, mean2, cov2):
     ret = torch.sum((mean1 - mean2) * (mean1 - mean2), -1)
-    cov1_sqrt = torch.sqrt(torch.clamp(cov1, min=1e-24)) 
+    cov1_sqrt = torch.sqrt(torch.clamp(cov1, min=1e-24))
     cov2_sqrt = torch.sqrt(torch.clamp(cov2, min=1e-24))
     ret = ret + torch.sum((cov1_sqrt - cov2_sqrt) * (cov1_sqrt - cov2_sqrt), -1)
 
     return ret
-
+# 保留
 def wasserstein_distance_matmul(mean1, cov1, mean2, cov2):
     mean1_2 = torch.sum(mean1**2, -1, keepdim=True)
     mean2_2 = torch.sum(mean2**2, -1, keepdim=True)
@@ -45,7 +45,7 @@ def wasserstein_distance_matmul(mean1, cov1, mean2, cov2):
     cov_ret = -2 * torch.matmul(torch.sqrt(torch.clamp(cov1, min=1e-24)), torch.sqrt(torch.clamp(cov2, min=1e-24)).transpose(-1, -2)) + cov1_2 + cov2_2.transpose(-1, -2)
 
     return ret + cov_ret
-
+#  保留
 def kl_distance(mean1, cov1, mean2, cov2):
     trace_part = torch.sum(cov1 / cov2, -1)
     mean_cov_part = torch.sum((mean2 - mean1) / cov2 * (mean2 - mean1), -1)
@@ -53,6 +53,7 @@ def kl_distance(mean1, cov1, mean2, cov2):
 
     return (trace_part + mean_cov_part - mean1.shape[1] + determinant_part) / 2
 
+#保留
 def kl_distance_matmul(mean1, cov1, mean2, cov2):
     cov1_det = 1 / torch.prod(cov1, -1, keepdim=True)
     cov2_det = torch.prod(cov2, -1, keepdim=True)
@@ -74,14 +75,16 @@ def kl_distance_matmul(mean1, cov1, mean2, cov2):
     return (log_det + mean_cov_part + trace_sum - mean1.shape[-1]) / 2
 
 
+#  保留
 def d2s_gaussiannormal(distance, gamma):
 
     return torch.exp(-gamma*distance)
 
+#  保留
 def d2s_1overx(distance):
 
     return 1/(1+distance)
-    
+
 
 
 ACT2FN = {"gelu": gelu, "relu": F.relu, "swish": swish}
@@ -103,42 +106,43 @@ class LayerNorm(nn.Module):
         return self.weight * x + self.bias
 
 
-class Embeddings(nn.Module):
-    """Construct the embeddings from item, position.
-    """
-    def __init__(self, args):
-        super(Embeddings, self).__init__()
-
-        self.item_embeddings = nn.Embedding(args.item_size, args.hidden_size, padding_idx=0)
-        self.position_embeddings = nn.Embedding(args.max_seq_length, args.hidden_size)
-
-        # 新的embedding添加
-        self.image_embeddings = nn.Embedding(args.item_size,args.hidden_size, padding_idx=0)
-        self.title_embeddings = nn.Embedding(args.item_size,args.hidden_size, padding_idx=0)
-        # --------
-
-        self.LayerNorm = LayerNorm(args.hidden_size, eps=1e-12)
-        self.dropout = nn.Dropout(args.hidden_dropout_prob)
-
-        self.args = args
-# 这里修改过
-    def forward(self, input_ids, images, title):
-        print("Input to the embedding layer:", input_ids.size)
-        seq_length = input_ids.size(1)
-        position_ids = torch.arange(seq_length, dtype=torch.long, device=input_ids.device)
-        position_ids = position_ids.unsqueeze(0).expand_as(input_ids)
-        items_embeddings = self.item_embeddings(input_ids)
-        position_embeddings = self.position_embeddings(position_ids)
-        ## 添加新的表征
-        image_embeddings =self.image_embeddings(input_ids)
-        title_embeddings = self.title_embeddings(input_ids)
-        # embeddings = items_embeddings + position_embeddings
-        embeddings = items_embeddings + position_embeddings + image_embeddings + title_embeddings
-        # ----
-        embeddings = self.LayerNorm(embeddings)
-        embeddings = self.dropout(embeddings)
-        print("embedding after:", input_ids.size)
-        return embeddings
+# class Embeddings(nn.Module):
+#     """Construct the embeddings from item, position.
+#     """
+#     def __init__(self, args):
+#         super(Embeddings, self).__init__()
+#         print(1)
+#         self.item_embeddings = nn.Embedding(args.item_size, args.hidden_size, padding_idx=0)
+#         self.position_embeddings = nn.Embedding(args.max_seq_length, args.hidden_size)
+#
+#         # 新的embedding添加
+#         self.image_embeddings = nn.Embedding(args.item_size,args.hidden_size, padding_idx=0)
+#         self.title_embeddings = nn.Embedding(args.item_size,args.hidden_size, padding_idx=0)
+#         # --------
+#
+#         self.LayerNorm = LayerNorm(args.hidden_size, eps=1e-12)
+#         self.dropout = nn.Dropout(args.hidden_dropout_prob)
+#
+#         self.args = args
+#         print(2)
+# # 这里修改过
+#     def forward(self, input_ids, images, title):
+#         print("Input to the embedding layer:", input_ids.size)
+#         seq_length = input_ids.size(1)
+#         position_ids = torch.arange(seq_length, dtype=torch.long, device=input_ids.device)
+#         position_ids = position_ids.unsqueeze(0).expand_as(input_ids)
+#         items_embeddings = self.item_embeddings(input_ids)
+#         position_embeddings = self.position_embeddings(position_ids)
+#         ## 添加新的表征
+#         image_embeddings =self.image_embeddings(input_ids)
+#         title_embeddings = self.title_embeddings(input_ids)
+#         # embeddings = items_embeddings + position_embeddings
+#         embeddings = items_embeddings + position_embeddings + image_embeddings + title_embeddings
+#         # ----
+#         embeddings = self.LayerNorm(embeddings)
+#         embeddings = self.dropout(embeddings)
+#         print("embedding after:", input_ids.size)
+#         return embeddings
 
 class SelfAttention(nn.Module):
     def __init__(self, args):
@@ -204,6 +208,7 @@ class SelfAttention(nn.Module):
 class DistSelfAttention(nn.Module):
     def __init__(self, args):
         super(DistSelfAttention, self).__init__()
+        # print("DistSelfAttention0")
         if args.hidden_size % args.num_attention_heads != 0:
             raise ValueError(
                 "The hidden size (%d) is not a multiple of the number of attention "
@@ -237,6 +242,7 @@ class DistSelfAttention(nn.Module):
         return x.permute(0, 2, 1, 3)
 
     def forward(self, input_mean_tensor, input_cov_tensor, attention_mask):
+        # print("DistSelfAttention forward0")
         mixed_mean_query_layer = self.mean_query(input_mean_tensor)
         mixed_mean_key_layer = self.mean_key(input_mean_tensor)
         mixed_mean_value_layer = self.mean_value(input_mean_tensor)
@@ -289,88 +295,89 @@ class DistSelfAttention(nn.Module):
         return mean_hidden_states, cov_hidden_states, attention_probs
 
 
-class DistMeanSelfAttention(nn.Module):
-    def __init__(self, args):
-        super(DistMeanSelfAttention, self).__init__()
-        if args.hidden_size % args.num_attention_heads != 0:
-            raise ValueError(
-                "The hidden size (%d) is not a multiple of the number of attention "
-                "heads (%d)" % (args.hidden_size, args.num_attention_heads))
-        self.num_attention_heads = args.num_attention_heads
-        self.attention_head_size = int(args.hidden_size / args.num_attention_heads)
-        self.all_head_size = self.num_attention_heads * self.attention_head_size
-
-        self.mean_query = nn.Linear(args.hidden_size, self.all_head_size)
-        self.mean_key = nn.Linear(args.hidden_size, self.all_head_size)
-        self.mean_value = nn.Linear(args.hidden_size, self.all_head_size)
-        self.cov_key = nn.Linear(args.hidden_size, self.all_head_size)
-        self.cov_query = nn.Linear(args.hidden_size, self.all_head_size)
-        self.cov_value = nn.Linear(args.hidden_size, self.all_head_size)
-
-        self.activation = nn.ELU()
-
-        self.attn_dropout = nn.Dropout(args.attention_probs_dropout_prob)
-        self.mean_dense = nn.Linear(args.hidden_size, args.hidden_size)
-        self.cov_dense = nn.Linear(args.hidden_size, args.hidden_size)
-        self.out_dropout = nn.Dropout(args.hidden_dropout_prob)
-
-        self.LayerNorm = LayerNorm(args.hidden_size, eps=1e-12)
-
-
-    def transpose_for_scores(self, x):
-        new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
-        x = x.view(*new_x_shape)
-        return x.permute(0, 2, 1, 3)
-
-    def forward(self, input_mean_tensor, input_cov_tensor, attention_mask):
-        mixed_mean_query_layer = self.mean_query(input_mean_tensor)
-        mixed_mean_key_layer = self.mean_key(input_mean_tensor)
-        mixed_mean_value_layer = self.mean_value(input_mean_tensor)
-
-        mean_query_layer = self.transpose_for_scores(mixed_mean_query_layer)
-        mean_key_layer = self.transpose_for_scores(mixed_mean_key_layer)
-        mean_value_layer = self.transpose_for_scores(mixed_mean_value_layer)
-
-        mixed_cov_query_layer = self.activation(self.cov_query(input_cov_tensor)) + 1
-        mixed_cov_key_layer = self.activation(self.cov_key(input_cov_tensor)) + 1
-        mixed_cov_value_layer = self.activation(self.cov_value(input_cov_tensor)) + 1
-
-        cov_query_layer = self.transpose_for_scores(mixed_cov_query_layer)
-        cov_key_layer = self.transpose_for_scores(mixed_cov_key_layer)
-        cov_value_layer = self.transpose_for_scores(mixed_cov_value_layer)
-
-        mean_attention_scores = torch.matmul(mean_query_layer, mean_key_layer.transpose(-1, -2))
-        cov_attention_scores = torch.matmul(cov_query_layer, cov_key_layer.transpose(-1, -2))
-
-        mean_attention_scores = mean_attention_scores / math.sqrt(self.attention_head_size)
-        mean_attention_scores = mean_attention_scores + attention_mask
-        mean_attention_probs = nn.Softmax(dim=-1)(mean_attention_scores)
-
-        cov_attention_scores = cov_attention_scores / math.sqrt(self.attention_head_size)
-        cov_attention_scores = cov_attention_scores + attention_mask
-        cov_attention_probs = nn.Softmax(dim=-1)(cov_attention_scores)
-
-        mean_attention_probs = self.attn_dropout(mean_attention_probs)
-        cov_attention_probs = self.attn_dropout(cov_attention_probs)
-        mean_context_layer = torch.matmul(mean_attention_probs, mean_value_layer)
-        cov_context_layer = torch.matmul(cov_attention_probs, cov_value_layer)
-        mean_context_layer = mean_context_layer.permute(0, 2, 1, 3).contiguous()
-        cov_context_layer = cov_context_layer.permute(0, 2, 1, 3).contiguous()
-        new_context_layer_shape = mean_context_layer.size()[:-2] + (self.all_head_size,)
-
-        mean_context_layer = mean_context_layer.view(*new_context_layer_shape)
-        cov_context_layer = cov_context_layer.view(*new_context_layer_shape)
-
-        mean_hidden_states = self.mean_dense(mean_context_layer)
-        mean_hidden_states = self.out_dropout(mean_hidden_states)
-        mean_hidden_states = self.LayerNorm(mean_hidden_states + input_mean_tensor)
-
-        cov_hidden_states = self.cov_dense(cov_context_layer)
-        cov_hidden_states = self.out_dropout(cov_hidden_states)
-        cov_hidden_states = self.LayerNorm(cov_hidden_states + input_cov_tensor)
-
-        return mean_hidden_states, cov_hidden_states, mean_attention_probs
-
+# class DistMeanSelfAttention(nn.Module):
+#     def __init__(self, args):
+#         super(DistMeanSelfAttention, self).__init__()
+#         # print("DistMeanSelfAttention1")
+#         if args.hidden_size % args.num_attention_heads != 0:
+#             raise ValueError(
+#                 "The hidden size (%d) is not a multiple of the number of attention "
+#                 "heads (%d)" % (args.hidden_size, args.num_attention_heads))
+#         self.num_attention_heads = args.num_attention_heads
+#         self.attention_head_size = int(args.hidden_size / args.num_attention_heads)
+#         self.all_head_size = self.num_attention_heads * self.attention_head_size
+#
+#         self.mean_query = nn.Linear(args.hidden_size, self.all_head_size)
+#         self.mean_key = nn.Linear(args.hidden_size, self.all_head_size)
+#         self.mean_value = nn.Linear(args.hidden_size, self.all_head_size)
+#         self.cov_key = nn.Linear(args.hidden_size, self.all_head_size)
+#         self.cov_query = nn.Linear(args.hidden_size, self.all_head_size)
+#         self.cov_value = nn.Linear(args.hidden_size, self.all_head_size)
+#
+#         self.activation = nn.ELU()
+#
+#         self.attn_dropout = nn.Dropout(args.attention_probs_dropout_prob)
+#         self.mean_dense = nn.Linear(args.hidden_size, args.hidden_size)
+#         self.cov_dense = nn.Linear(args.hidden_size, args.hidden_size)
+#         self.out_dropout = nn.Dropout(args.hidden_dropout_prob)
+#
+#         self.LayerNorm = LayerNorm(args.hidden_size, eps=1e-12)
+#
+#
+#     def transpose_for_scores(self, x):
+#         new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
+#         x = x.view(*new_x_shape)
+#         return x.permute(0, 2, 1, 3)
+#
+#     def forward(self, input_mean_tensor, input_cov_tensor, attention_mask):
+#         mixed_mean_query_layer = self.mean_query(input_mean_tensor)
+#         mixed_mean_key_layer = self.mean_key(input_mean_tensor)
+#         mixed_mean_value_layer = self.mean_value(input_mean_tensor)
+#
+#         mean_query_layer = self.transpose_for_scores(mixed_mean_query_layer)
+#         mean_key_layer = self.transpose_for_scores(mixed_mean_key_layer)
+#         mean_value_layer = self.transpose_for_scores(mixed_mean_value_layer)
+#
+#         mixed_cov_query_layer = self.activation(self.cov_query(input_cov_tensor)) + 1
+#         mixed_cov_key_layer = self.activation(self.cov_key(input_cov_tensor)) + 1
+#         mixed_cov_value_layer = self.activation(self.cov_value(input_cov_tensor)) + 1
+#
+#         cov_query_layer = self.transpose_for_scores(mixed_cov_query_layer)
+#         cov_key_layer = self.transpose_for_scores(mixed_cov_key_layer)
+#         cov_value_layer = self.transpose_for_scores(mixed_cov_value_layer)
+#
+#         mean_attention_scores = torch.matmul(mean_query_layer, mean_key_layer.transpose(-1, -2))
+#         cov_attention_scores = torch.matmul(cov_query_layer, cov_key_layer.transpose(-1, -2))
+#
+#         mean_attention_scores = mean_attention_scores / math.sqrt(self.attention_head_size)
+#         mean_attention_scores = mean_attention_scores + attention_mask
+#         mean_attention_probs = nn.Softmax(dim=-1)(mean_attention_scores)
+#
+#         cov_attention_scores = cov_attention_scores / math.sqrt(self.attention_head_size)
+#         cov_attention_scores = cov_attention_scores + attention_mask
+#         cov_attention_probs = nn.Softmax(dim=-1)(cov_attention_scores)
+#
+#         mean_attention_probs = self.attn_dropout(mean_attention_probs)
+#         cov_attention_probs = self.attn_dropout(cov_attention_probs)
+#         mean_context_layer = torch.matmul(mean_attention_probs, mean_value_layer)
+#         cov_context_layer = torch.matmul(cov_attention_probs, cov_value_layer)
+#         mean_context_layer = mean_context_layer.permute(0, 2, 1, 3).contiguous()
+#         cov_context_layer = cov_context_layer.permute(0, 2, 1, 3).contiguous()
+#         new_context_layer_shape = mean_context_layer.size()[:-2] + (self.all_head_size,)
+#
+#         mean_context_layer = mean_context_layer.view(*new_context_layer_shape)
+#         cov_context_layer = cov_context_layer.view(*new_context_layer_shape)
+#
+#         mean_hidden_states = self.mean_dense(mean_context_layer)
+#         mean_hidden_states = self.out_dropout(mean_hidden_states)
+#         mean_hidden_states = self.LayerNorm(mean_hidden_states + input_mean_tensor)
+#
+#         cov_hidden_states = self.cov_dense(cov_context_layer)
+#         cov_hidden_states = self.out_dropout(cov_hidden_states)
+#         cov_hidden_states = self.LayerNorm(cov_hidden_states + input_cov_tensor)
+#
+#         return mean_hidden_states, cov_hidden_states, mean_attention_probs
+#
 
 
 class Intermediate(nn.Module):
@@ -402,6 +409,7 @@ class Intermediate(nn.Module):
 class DistIntermediate(nn.Module):
     def __init__(self, args):
         super(DistIntermediate, self).__init__()
+        # print("DistIntermediate")
         self.dense_1 = nn.Linear(args.hidden_size, args.hidden_size * 4)
         self.intermediate_act_fn = nn.ELU()
 
@@ -411,7 +419,7 @@ class DistIntermediate(nn.Module):
 
 
     def forward(self, input_tensor):
-
+        # print("DistIntermediate_forward")
         hidden_states = self.dense_1(input_tensor)
         hidden_states = self.intermediate_act_fn(hidden_states)
 
@@ -464,7 +472,7 @@ class DistMeanSALayer(nn.Module):
         return mean_intermediate_output, cov_intermediate_output, attention_scores
 
 
-class DistSAEncoder(nn.Module):               
+class DistSAEncoder(nn.Module):
     def __init__(self, args):
         super(DistSAEncoder, self).__init__()
         layer = DistLayer(args)

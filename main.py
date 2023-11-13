@@ -11,8 +11,12 @@ from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
 from datasets import SASRecDataset
 from trainers import FinetuneTrainer, DistSAModelTrainer
-from models import S3RecModel
-from seqmodels import SASRecModel, DistSAModel, DistMeanSAModel
+# from models import S3RecModel
+# from seqmodels import SASRecModel, DistSAModel, DistMeanSAModel
+
+from seqmodels import DistSAModel
+# from seqmodels import SASRecModel
+
 from utils import EarlyStopping, get_user_seqs, get_item2attribute_json, check_path, set_seed
 
 def main():
@@ -21,13 +25,16 @@ def main():
     # parser.add_argument('--data_dir', default='../data/', type=str)
     parser.add_argument('--data_dir', default=r'D:/Downloads/STOSA/data/', type=str)
     parser.add_argument('--output_dir', default='output/', type=str)
-    parser.add_argument('--data_name', default='Beauty', type=str)
-    # parser.add_argument('--data_name', default='All_Beauty', type=str)
+    # parser.add_argument('--data_name', default='Beauty', type=str)
+    # parser.add_argument('--data_name', default='Office_Products', type=str)
+    parser.add_argument('--data_name', default='All_Beauty', type=str)
     parser.add_argument('--do_eval', action='store_true')
     parser.add_argument('--ckp', default=10, type=int, help="pretrain epochs 10, 20, 30...")
 
     # model args
-    parser.add_argument("--model_name", default='Finetune_full', type=str)
+    # parser.add_argument("--model_name", default='Finetune_full', type=str)
+    parser.add_argument("--model_name", default='DistSAModel', type=str)
+
     parser.add_argument("--hidden_size", type=int, default=64, help="hidden size of transformer model")
     parser.add_argument("--num_hidden_layers", type=int, default=2, help="number of layers")
     parser.add_argument('--num_attention_heads', default=2, type=int)
