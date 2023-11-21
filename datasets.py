@@ -161,7 +161,12 @@ class SASRecDataset(Dataset):
         elif self.data_type == 'valid':
             input_ids = items[:-2]
             target_pos = items[1:-1]
-            answer = [items[-2]]
+            if len(items) >= 2:
+                answer = [items[-2]]
+            else:
+                # 处理列表长度不足的情况
+                answer = [0]
+            # answer = [items[-2]]
 
         else:
             input_ids = items[:-1]
@@ -188,6 +193,7 @@ class SASRecDataset(Dataset):
         assert len(input_ids) == self.max_len
         assert len(target_pos) == self.max_len
         assert len(target_neg) == self.max_len
+        # print(index)
 #就是在这里
         if self.test_neg_items is not None:
             test_samples = self.test_neg_items[index]

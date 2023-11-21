@@ -1,9 +1,10 @@
+import numpy as np
 import torch
 import torch.nn as nn
 # from modules import Encoder, LayerNorm, DistSAEncoder, DistMeanSAEncoder
 from modules import LayerNorm, DistSAEncoder
 
-"""使用这个模式"""
+
 # class SASRecModel(nn.Module):
 #     def __init__(self, args):
 #         super(SASRecModel, self).__init__()
@@ -94,20 +95,46 @@ class DistSAModel(nn.Module):
         self.apply(self.init_weights) 应用自定义的权重初始化方法
         """
         super(DistSAModel, self).__init__()
-        # print("distsamodel init")
         self.item_mean_embeddings = nn.Embedding(args.item_size, args.hidden_size, padding_idx=0)
         self.item_cov_embeddings = nn.Embedding(args.item_size, args.hidden_size, padding_idx=0)
         self.position_mean_embeddings = nn.Embedding(args.max_seq_length, args.hidden_size)
         self.position_cov_embeddings = nn.Embedding(args.max_seq_length, args.hidden_size)
-        # 新添加
-        self.image_embeddings = nn.Embedding(args.item_size, 512, padding_idx=0)
-
         self.user_margins = nn.Embedding(args.num_users, 1)
         self.item_encoder = DistSAEncoder(args)
         self.LayerNorm = LayerNorm(args.hidden_size, eps=1e-12)
         self.dropout = nn.Dropout(args.hidden_dropout_prob)
         self.args = args
         self.apply(self.init_weights)
+
+        # 新添加  image_embeddings部分
+        image_embeddings = torch.load("image_embedding.pt")
+        image_embeddings = torch.stack(image_embeddings)
+        print("初始image_embeddings形状:", image_embeddings.shape)
+        image_embeddings = image_embeddings.squeeze(1)
+        image_embeddings_cpu = image_embeddings.cpu()
+        # 确保 image_embeddings 是 NumPy 数组
+        if not isinstance(image_embeddings, np.ndarray):
+            image_embeddings = np.array(image_embeddings_cpu)
+        print("去除中间的1维度后的形状:", image_embeddings.shape)
+
+        self.image_embeddings = torch.nn.Embedding(num_embeddings=16539, embedding_dim=512)
+        self.image_embeddings.weight.data.copy_(torch.from_numpy(image_embeddings))
+        self.image_embeddings.weight.requires_grad = False
+
+        # 新添加 text_embeddings部分
+        text_embeddings = torch.load("text_embedding.pt")
+        text_embeddings = torch.stack(text_embeddings)
+        print("初始text_embeddings形状：", text_embeddings.shape)
+        text_embeddings = text_embeddings.squeeze(1)
+        text_embeddings_cpu = text_embeddings.cpu()
+        # 确保 text_embeddings 是 NumPy 数组
+        if not isinstance(text_embeddings, np.ndarray):
+            text_embeddings = np.array(text_embeddings_cpu)
+        print("去除中间的1维度后的形状:", text_embeddings.shape)
+
+        self.text_embeddings = torch.nn.Embedding(num_embeddings=16539, embedding_dim=512)
+        self.text_embeddings.weight.data.copy_(torch.from_numpy(text_embeddings))
+        self.text_embeddings.weight.requires_grad = False
 
     """
     add_position_mean_embedding
@@ -120,42 +147,16 @@ class DistSAModel(nn.Module):
         seq_length = sequence.size(1)
         position_ids = torch.arange(seq_length, dtype=torch.long, device=sequence.device)
         position_ids = position_ids.unsqueeze(0).expand_as(sequence)
-        # print(type(sequence))
-        print(sequence.shape)
-        sequence_str = str(sequence)
+
         item_embeddings = self.item_mean_embeddings(sequence)
-        #新添加
+
+        # 新添加image_embeddings部分
         image_embeddings = self.image_embeddings(sequence)
+        print("image_embeddings的形状：", image_embeddings.shape)  # torch.Size([100, 50, 512])
+        print("item_embeddings的形状：", item_embeddings.shape)  # torch.Size([100, 50, 64])
+        text_embeddings = self.text_embeddings(sequence)
+        print("text_embeddings形状：", text_embeddings.shape)  # torch.Size([100, 50, 64])
 
-        item_embeddings_str = str(item_embeddings)
-        image_embeddings_str = str(image_embeddings)
-
-        torch.set_printoptions(threshold=10000)
-        with open('sequence.txt', 'w') as f:
-            f.write(sequence_str)
-
-        with open('item_embeddings.txt', 'w') as f:
-            f.write(item_embeddings_str)
-
-        with open('image_embeddings.txt', 'w') as f:
-            f.write(image_embeddings_str)
-        # print("item_embeddings 的形状:", item_embeddings.shape)
-        # print( "item_embeddings 第一个张量形状: ", item_embeddings[0:1].shape)
-        print("image_embeddings 的形状:", image_embeddings.shape)
-        # print("image_embeddings1 的形状:", image_embeddings_0.shape)
-        print("image_embeddings 第一个张量的形状:", image_embeddings[0:1].shape)
-        print("sequence 第1个序列:", sequence[0])
-        image_embeddings_0 = self.image_embeddings(sequence[0])
-        image_embeddings_1 = self.image_embeddings(sequence[1])
-        image_embeddings_2 = self.image_embeddings(sequence[2])
-        image_embeddings_3 = self.image_embeddings(sequence[3])
-        image_embeddings_4 = self.image_embeddings(sequence[4])
-
-        torch.save(image_embeddings_0, 'image_embeddings_str0.pt')
-        torch.save(image_embeddings_1, 'image_embeddings_str1.pt')
-        torch.save(image_embeddings_2, 'image_embeddings_str2.pt')
-        torch.save(image_embeddings_3, 'image_embeddings_str3.pt')
-        torch.save(image_embeddings_4, 'image_embeddings_str4.pt')
         position_embeddings = self.position_mean_embeddings(position_ids)
         sequence_emb = item_embeddings + position_embeddings
         sequence_emb = self.LayerNorm(sequence_emb)
@@ -182,9 +183,7 @@ class DistSAModel(nn.Module):
         seq_length = sequence.size(1)
         position_ids = torch.arange(seq_length, dtype=torch.long, device=sequence.device)
         position_ids = position_ids.unsqueeze(0).expand_as(sequence)
-        # print(111)
         item_embeddings = self.item_cov_embeddings(sequence)
-        # print(222)
         position_embeddings = self.position_cov_embeddings(position_ids)
         sequence_emb = item_embeddings + position_embeddings
         sequence_emb = self.LayerNorm(sequence_emb)

@@ -23,10 +23,12 @@ countU = defaultdict(lambda: 0)
 countP = defaultdict(lambda: 0)
 line = 0
 
-# DATASET = 'Office_Products'
-DATASET ='All_Beauty'
+# DATASET = 'Luxury_Beauty'
+DATASET = 'All_Beauty'
 # dataname = '/home/zfan/BDSC/projects/datasets/reviews_' + DATASET + '_5.json.gz'
-dataname = r'D:/Downloads/STOSA/data/All_Beauty/' + DATASET + '_5.json.gz'
+# dataname = r'D:/Downloads/STOSA/data/All_Beauty/' + DATASET + '_5.json.gz'
+dataname = r'D:/Downloads/STOSA/data/All_Beauty/' + DATASET + '.json.gz'
+
 #文件路径尽量弄到配置里，或者设置好参数传入,像这个代码一样
 if not os.path.isdir('./'+DATASET):
     os.mkdir('./'+DATASET)
@@ -116,40 +118,53 @@ for user in User:
         user_test[user] = []
         user_test[user].append(User[user][-1])
 
+print(User[1305])
+# 您要查找的 itemid
+target_itemid = [1213, 899, 451, 665,]
 
+for asin, itemid in itemmap.items():
+    if itemid in target_itemid:
+        print(f"Found asin '{asin}' for itemid {itemid}")
+        # 如果找到了，可以从列表中移除该 itemid，以避免重复打印
+        target_itemid.remove(itemid)
+    else:
+        continue
 
+# 检查是否有未找到的 itemid
+for itemid in target_itemid:
+    print(f"asin for itemid {itemid} not found")
 
-def writetofile(data, dfile):
-    with open(dfile, 'w') as f:
-        for u, ilist in sorted(data.items()):
-            for i, t in ilist:
-                f.write(str(u) + '\t'+ str(i) + '\t' + str(t) + "\n")
-
-def writetofile_v2(data, dfile):
-    with open(dfile, 'w') as f:
-        for u, ilist in sorted(data.items()):
-            f.write(str(u))
-            for i, t in ilist:
-                f.write(' '+ str(i))
-            f.write("\n")
-
-#writetofile(user_train, train_file)
-#writetofile(user_valid, valid_file)
-#writetofile(user_test, test_file)
-
-writetofile_v2(User, data_file)
-
-
-
-num_instances = sum([len(ilist) for _, ilist in User.items()])
-print('total user: ', len(User))
-print('total instances: ', num_instances)
-print('avg length: ', num_instances / len(User))
-print('total items: ', itemnum)
-print('density: ', num_instances / (len(User) * itemnum))
-print('valid #users: ', len(user_valid))
-numvalid_instances = sum([len(ilist) for _, ilist in user_valid.items()])
-print('valid instances: ', numvalid_instances)
-numtest_instances = sum([len(ilist) for _, ilist in user_test.items()])
-print('test #users: ', len(user_test))
-print('test instances: ', numtest_instances)
+# def writetofile(data, dfile):
+#     with open(dfile, 'w') as f:
+#         for u, ilist in sorted(data.items()):
+#             for i, t in ilist:
+#                 f.write(str(u) + '\t'+ str(i) + '\t' + str(t) + "\n")
+#
+# def writetofile_v2(data, dfile):
+#     with open(dfile, 'w') as f:
+#         for u, ilist in sorted(data.items()):
+#             f.write(str(u))
+#             for i, t in ilist:
+#                 f.write(' '+ str(i))
+#             f.write("\n")
+#
+# #writetofile(user_train, train_file)
+# #writetofile(user_valid, valid_file)
+# #writetofile(user_test, test_file)
+#
+# writetofile_v2(User, data_file)
+#
+#
+#
+# num_instances = sum([len(ilist) for _, ilist in User.items()])
+# print('total user: ', len(User))
+# print('total instances: ', num_instances)
+# print('avg length: ', num_instances / len(User))
+# print('total items: ', itemnum)
+# print('density: ', num_instances / (len(User) * itemnum))
+# print('valid #users: ', len(user_valid))
+# numvalid_instances = sum([len(ilist) for _, ilist in user_valid.items()])
+# print('valid instances: ', numvalid_instances)
+# numtest_instances = sum([len(ilist) for _, ilist in user_test.items()])
+# print('test #users: ', len(user_test))
+# print('test instances: ', numtest_instances)
